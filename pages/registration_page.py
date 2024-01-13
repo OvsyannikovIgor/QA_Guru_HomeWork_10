@@ -98,4 +98,3 @@ class RegistrationPage():
 
     def submit_btn(self):
         return self.submit.press_enter()
-
