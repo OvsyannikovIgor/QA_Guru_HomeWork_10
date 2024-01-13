@@ -1,87 +1,90 @@
-import os
-
 from selene import browser, have
 
-F_NAME = '#firstName'
-L_NAME = '#lastName'
-EMAIL = '#userEmail'
-GENDER_1 = '#gender-radio-1'
-GENDER_2 = '#gender-radio-2'
-GENDER_3 = '#gender-radio-3'
-MOBILE = '#userNumber'
-BIRTH = '#dateOfBirthInput'
-MONTH_BIRTH = 'option:nth-child(7)'
-YEAR_BIRTH = 'option:nth-child(94)'
-DAY_BIRTH = 'div.react-datepicker__day--018'
-SUBJECTS = '#subjectsInput'
-HOBBIES_1 = '[for="hobbies-checkbox-1"]'
-HOBBIES_2 = '[for="hobbies-checkbox-2"]'
-HOBBIES_3 = '[for="hobbies-checkbox-2"]'
-PICTURE = '#uploadPicture'
-C_ADDRESS = '#currentAddress'
-STATE = '#react-select-3-input'
-CITY = '#react-select-4-input'
-SUBMIT = '#submit'
-BODY = ' table > tbody > tr:nth-child(1) > td:nth-child(2)'
+import resource
+
+
+# GENDER_1 = '#gender-radio-1'
+# GENDER_2 = '#gender-radio-2'
+# GENDER_3 = '#gender-radio-3'
+# HOBBIES_1 = '[for="hobbies-checkbox-1"]'
+# HOBBIES_2 = '[for="hobbies-checkbox-2"]'
+# HOBBIES_3 = '[for="hobbies-checkbox-2"]'
 
 
 class RegistrationPage():
     def __init__(self):
+        self.first_name = browser.element('#firstName')
+        self.last_name = browser.element('#lastName')
+        self.gender = browser.element('#gender-radio-2')
+        self.email = browser.element('#userEmail')
+        self.mobile = browser.element('#userNumber')
+        self.date_of_birth = browser.element('#dateOfBirthInput')
+        self.month_of_birth = browser.element('.react-datepicker__month-select')
+        self.year_of_birth = browser.element('.react-datepicker__year-select')
+        self.subject = browser.element('#subjectsInput')
+        self.adress = browser.element('#currentAddress')
+        self.hobies = browser.element('[for="hobbies-checkbox-2"]')
+        self.state = browser.element('#react-select-3-input')
+        self.city = browser.element('#react-select-4-input')
+        self.picture = browser.element('#uploadPicture')
+        self.submit = browser.element('#submit')
+        self.completed_registration_form = browser.all(' table > tbody > tr').all('td:nth-child(2)')
         pass
 
     def open_registration_page(self):
         browser.open('/automation-practice-form')
 
     def fill_first_name(self, value):
-        browser.element(F_NAME).type(value)
+        self.first_name.type(value)
         return self
 
     def fill_last_name(self, value):
-        browser.element(L_NAME).type(value)
+        self.last_name.type(value)
         return self
 
     def choice_gender(self):
-        browser.element(GENDER_2).double_click()
+        self.gender.double_click()
         return self
 
     def fill_email(self, value):
-        browser.element(EMAIL).type(value)
+        self.email.type(value)
         return self
 
     def fill_user_number(self, value):
-        browser.element(MOBILE).type(value)
+        self.mobile.type(value)
         return self
 
-    def fill_date_of_birth(self):
-        browser.element(BIRTH).click()
-        browser.element(MONTH_BIRTH).click()
-        browser.element(YEAR_BIRTH).click()
-        browser.element(DAY_BIRTH).click()
+    def fill_date_of_birth(self, year, month, day):
+        self.date_of_birth.click()
+        self.month_of_birth.type(month)
+        self.year_of_birth.type(year)
+        browser.element(
+            f'.react-datepicker__day--0{day}:not(.react-datepicker__day--outside-month)'
+        ).click()
         return self
 
     def fill_subjects(self, value):
-        browser.element(SUBJECTS).type(value).press_enter()
+        self.subject.type(value).press_enter()
         return self
 
     def fill_current_address(self, value):
-        browser.element(C_ADDRESS).type(value)
+        self.adress.type(value)
         return self
 
     def choice_hobies(self):
-        browser.element(HOBBIES_2).click()
+        self.hobies.click()
         return self
 
     def fill_state(self, state, city):
-        browser.element(STATE).type(state).press_enter()
-        browser.element(CITY).type(city).press_enter()
+        self.state.type(state).press_enter()
+        self.city.type(city).press_enter()
         return self
 
-    def upload_picture(self):
-        browser.element('#uploadPicture').send_keys(os.path.abspath('../resources/picture.png'))
-        return self
+    def upload_picture(self, value):
+        return self.picture.set_value(resource.path(value))
 
     def should_registered_user_with(self):
-        browser.all(' table > tbody > tr').all('td:nth-child(2)').should(
+        self.completed_registration_form.should(
             have.exact_texts('Мистер Твистер',
                              'glavniy@ministr.ru',
                              'Female', '7925002222',
@@ -94,5 +97,5 @@ class RegistrationPage():
         )
 
     def submit_btn(self):
-        browser.element(SUBMIT).press_enter()
-        return self
+        return self.submit.press_enter()
+
